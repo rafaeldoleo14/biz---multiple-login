@@ -68,7 +68,7 @@ GoRoute _animatedBuilderRoute(
 }
 
 final appRouter = GoRouter(
-  initialLocation: '/splash',
+  initialLocation: '/new-dashboard',
 
   routes: [
     // Múltiple login

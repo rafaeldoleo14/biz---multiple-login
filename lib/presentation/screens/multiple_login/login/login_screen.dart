@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:biz_codigo_cash/presentation/styles/app_styles.dart';
+import 'package:biz_codigo_cash/provider/multiple_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 // import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -29,9 +31,15 @@ class _LoginScreenState extends State<LoginScreen> {
       _userCtrl.text.trim().isNotEmpty &&
       _passCtrl.text.isNotEmpty;
 
+  late final MultipleLoginProvider multipleLoginProvider;
+
   @override
   void initState() {
     super.initState();
+    multipleLoginProvider = Provider.of<MultipleLoginProvider>(
+      context,
+      listen: false,
+    );
     _companyUserCtrl.addListener(_refresh);
     _userCtrl.addListener(_refresh);
     _passCtrl.addListener(_refresh);
@@ -66,6 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await Future.delayed(const Duration(seconds: 2));
 
       if (!mounted) return;
+
+      multipleLoginProvider.addCompany(_companyUserCtrl.text.trim());
 
       context.push('/token-popular');
     } finally {

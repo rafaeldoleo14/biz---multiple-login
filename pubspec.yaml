@@ -71,6 +71,120 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
+    - family: SF
+      fonts:
+        # ---------- SF Pro Text ----------
+        - asset: fonts/SF/SF-Pro-Text-Ultralight.otf
+          weight: 200
+        - asset: fonts/SF/SF-Pro-Text-Thin.otf
+          weight: 100
+        - asset: fonts/SF/SF-Pro-Text-Light.otf
+          weight: 300
+        - asset: fonts/SF/SF-Pro-Text-Regular.otf
+          weight: 400
+        - asset: fonts/SF/SF-Pro-Text-Medium.otf
+          weight: 500
+        - asset: fonts/SF/SF-Pro-Text-Semibold.otf
+          weight: 600
+        - asset: fonts/SF/SF-Pro-Text-Bold.otf
+          weight: 700
+        - asset: fonts/SF/SF-Pro-Text-Heavy.otf
+          weight: 800
+
+        # Italic (Text)
+        - asset: fonts/SF/SF-Pro-Text-UltralightItalic.otf
+          weight: 200
+          style: italic
+        - asset: fonts/SF/SF-Pro-Text-ThinItalic.otf
+          weight: 100
+          style: italic
+        - asset: fonts/SF/SF-Pro-Text-LightItalic.otf
+          weight: 300
+          style: italic
+        - asset: fonts/SF/SF-Pro-Text-RegularItalic.otf
+          weight: 400
+          style: italic
+        - asset: fonts/SF/SF-Pro-Text-MediumItalic.otf
+          weight: 500
+          style: italic
+        - asset: fonts/SF/SF-Pro-Text-SemiboldItalic.otf
+          weight: 600
+          style: italic
+        - asset: fonts/SF/SF-Pro-Text-BoldItalic.otf
+          weight: 700
+          style: italic
+        - asset: fonts/SF/SF-Pro-Text-HeavyItalic.otf
+          weight: 800
+          style: italic
+
+        # ---------- SF Pro Display ----------
+        - asset: fonts/SF/SF-Pro-Display-Ultralight.otf
+          weight: 200
+        - asset: fonts/SF/SF-Pro-Display-Thin.otf
+          weight: 100
+        - asset: fonts/SF/SF-Pro-Display-Light.otf
+          weight: 300
+        - asset: fonts/SF/SF-Pro-Display-Regular.otf
+          weight: 400
+        - asset: fonts/SF/SF-Pro-Display-Medium.otf
+          weight: 500
+        - asset: fonts/SF/SF-Pro-Display-Semibold.otf
+          weight: 600
+        - asset: fonts/SF/SF-Pro-Display-Bold.otf
+          weight: 700
+        - asset: fonts/SF/SF-Pro-Display-Heavy.otf
+          weight: 800
+        - asset: fonts/SF/SF-Pro-Display-Black.otf
+          weight: 900
+
+        # Italic (Display)
+        - asset: fonts/SF/SF-Pro-Display-UltralightItalic.otf
+          weight: 200
+          style: italic
+        - asset: fonts/SF/SF-Pro-Display-ThinItalic.otf
+          weight: 100
+          style: italic
+        - asset: fonts/SF/SF-Pro-Display-LightItalic.otf
+          weight: 300
+          style: italic
+        - asset: fonts/SF/SF-Pro-Display-RegularItalic.otf
+          weight: 400
+          style: italic
+        - asset: fonts/SF/SF-Pro-Display-MediumItalic.otf
+          weight: 500
+          style: italic
+        - asset: fonts/SF/SF-Pro-Display-SemiboldItalic.otf
+          weight: 600
+          style: italic
+        - asset: fonts/SF/SF-Pro-Display-BoldItalic.otf
+          weight: 700
+          style: italic
+        - asset: fonts/SF/SF-Pro-Display-HeavyItalic.otf
+          weight: 800
+          style: italic
+        - asset: fonts/SF/SF-Pro-Display-BlackItalic.otf
+          weight: 900
+          style: italic
+
+        # ---------- SF Pro Rounded (si la usas) ----------
+        - asset: fonts/SF/SF-Pro-Rounded-Ultralight.otf
+          weight: 200
+        - asset: fonts/SF/SF-Pro-Rounded-Thin.otf
+          weight: 100
+        - asset: fonts/SF/SF-Pro-Rounded-Light.otf
+          weight: 300
+        - asset: fonts/SF/SF-Pro-Rounded-Regular.otf
+          weight: 400
+        - asset: fonts/SF/SF-Pro-Rounded-Medium.otf
+          weight: 500
+        - asset: fonts/SF/SF-Pro-Rounded-Semibold.otf
+          weight: 600
+        - asset: fonts/SF/SF-Pro-Rounded-Bold.otf
+          weight: 700
+        - asset: fonts/SF/SF-Pro-Rounded-Heavy.otf
+          weight: 800
+        - asset: fonts/SF/SF-Pro-Rounded-Black.otf
+          weight: 900
     - family: Neo Sans Std
       fonts:
         - asset: fonts/Neo Sans Std Regular.otf

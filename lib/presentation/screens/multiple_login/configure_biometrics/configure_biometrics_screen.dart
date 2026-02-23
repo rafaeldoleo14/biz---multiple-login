@@ -1,3 +1,4 @@
+import 'package:biz_codigo_cash/presentation/screens/multiple_login/biz_welcome_back/biz_welcome_back_screen.dart';
 import 'package:biz_codigo_cash/presentation/styles/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -25,42 +26,7 @@ class _ConfigureBiometricsScreenState extends State<ConfigureBiometricsScreen> {
     setState(() => _loading = true);
 
     try {
-      // 1) Soporte del dispositivo
-      final isSupported = await _auth.isDeviceSupported();
-      final canCheck = await _auth.canCheckBiometrics;
-
-      // 2) Biométricos disponibles (MUY útil para depurar)
-      final available = await _auth.getAvailableBiometrics();
-
-      if (!isSupported) {
-        _show('Este dispositivo no soporta biometría.');
-        return;
-      }
-
-      // Si vas biometricOnly:true, asegúrate que haya biometría enrolada
-      if (!canCheck || available.isEmpty) {
-        _show('No hay biometría configurada en el dispositivo.');
-        return;
-      }
-
-      debugPrint('isSupported=$isSupported');
-      debugPrint('canCheck=$canCheck');
-      debugPrint('available=$available');
-
-      final auth = LocalAuthentication();
-
-      final supported = await auth.isDeviceSupported();
-
-      debugPrint(
-        "isDeviceSupported: $supported | canCheckBiometrics: $canCheck",
-      );
-
-      final didAuth = await _auth.authenticate(
-        localizedReason: 'Valide su identidad para continuar.',
-        biometricOnly: true,
-        // Opcional (si tu app se puede ir a background durante auth)
-        // persistAcrossBackgrounding: true,
-      ); // firma actual de authenticate :contentReference[oaicite:1]{index=1}
+      final didAuth = await showFakeBiometricPrompt(context);
 
       if (!mounted) return;
 

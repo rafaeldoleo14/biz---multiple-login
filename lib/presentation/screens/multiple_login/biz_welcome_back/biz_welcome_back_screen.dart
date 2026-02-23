@@ -1,18 +1,56 @@
+import 'dart:async';
+import 'dart:ui';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/new_dashboard/new_dashboard.dart';
 import 'package:biz_codigo_cash/presentation/styles/app_styles.dart';
+import 'package:biz_codigo_cash/provider/multiple_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-class BizWelcomeBackScreen extends StatelessWidget {
+class BizWelcomeBackScreen extends StatefulWidget {
   const BizWelcomeBackScreen({super.key});
 
+  @override
+  State<BizWelcomeBackScreen> createState() => _BizWelcomeBackScreenState();
+}
+
+class _BizWelcomeBackScreenState extends State<BizWelcomeBackScreen> {
   /// ✅ Flag para probar MULTIPLE RNCs
   /// (luego lo conectas a tu API / storage)
   final bool isMultipleRncs = false;
+
+  // ✅ Tus 4 imágenes (luego cambias las rutas)
+  final List<String> _images = const [
+    'assets/icons/Property 1=Carrusel.png',
+    'assets/icons/Property 1=Default.png',
+    'assets/icons/Property 1=Default (3).png',
+    'assets/icons/Property 1=Default (2).png',
+  ];
+
+  int _activeIndex = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (!mounted) return;
+      setState(() {
+        _activeIndex = (_activeIndex + 1) % _images.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   void _onTapLogin(BuildContext context) {
     if (isMultipleRncs) {
@@ -31,13 +69,10 @@ class BizWelcomeBackScreen extends StatelessWidget {
   // ✅ Al seleccionar empresa -> ir DIRECTO a contraseña
   // =========================
   Future<void> _showSelectCompanySheet(BuildContext context) async {
-    final companies = const [
-      "The Coca Cola Company For DR",
-      "PepsiCo Inc.",
-      "Nestle S.A.",
-      "Unilever PLC",
-      "Danone S.A.",
-    ];
+    final MultipleLoginProvider multipleLoginProvider =
+        Provider.of<MultipleLoginProvider>(context);
+
+    final companies = multipleLoginProvider.companies;
 
     return showModalBottomSheet<void>(
       context: context,
@@ -143,65 +178,100 @@ class BizWelcomeBackScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0XFFF6F2EB);
-
     return Scaffold(
-      backgroundColor: bg,
+      backgroundColor: Color(0XFFF6F3EC),
       body: Stack(
         children: [
+          // ✅ AQUÍ va el "carousel" SIN SCROLL: solo cambia con animación
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            child: Image.asset(
-              'assets/icons/Rectangle 1299.png',
-              fit: BoxFit.contain,
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onHorizontalDragEnd: (details) {
+                final v = details.primaryVelocity ?? 0;
+
+                // v < 0 => swipe hacia la izquierda (siguiente)
+                // v > 0 => swipe hacia la derecha (anterior)
+                if (v.abs() < 120)
+                  return; // umbral para evitar toques accidentales
+
+                setState(() {
+                  if (v < 0) {
+                    _activeIndex = (_activeIndex + 1) % _images.length;
+                  } else {
+                    _activeIndex =
+                        (_activeIndex - 1 + _images.length) % _images.length;
+                  }
+                });
+
+                // ✅ reinicia el timer para que no cambie inmediatamente después del swipe
+                _timer?.cancel();
+                _timer = Timer.periodic(const Duration(seconds: 5), (_) {
+                  if (!mounted) return;
+                  setState(() {
+                    _activeIndex = (_activeIndex + 1) % _images.length;
+                  });
+                });
+              },
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 650),
+                switchInCurve: Curves.easeInOut,
+                switchOutCurve: Curves.easeInOut,
+                transitionBuilder: (child, animation) {
+                  // ✅ Fade simple (sin slide)
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                child: Image.asset(
+                  _images[_activeIndex],
+                  key: ValueKey(_images[_activeIndex]),
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
           ),
 
           SafeArea(
             child: Column(
               children: [
-                const SizedBox(height: 4),
-                Container(
-                  height: 48,
-                  margin: const EdgeInsets.symmetric(horizontal: 26),
-                  child: Row(
-                    children: [
-                      const ProgressLine(active: true),
-                      const SizedBox(width: 8),
-                      const ProgressLine(),
-                      const SizedBox(width: 8),
-                      const ProgressLine(),
-                      const SizedBox(width: 8),
-                      const ProgressLine(),
-                      const SizedBox(width: 8),
-                      const ProgressLine(),
-                      const SizedBox(width: 8),
-                      const ProgressLine(),
-                      const SizedBox(width: 29),
-                      SvgPicture.asset('assets/icons/Frame 427318358.svg'),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Gestione el pago de nómina desde la app BIZ',
-                          style: AppStyle.useNeoSans(
-                            Colors.white,
-                            24,
-                            FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // const SizedBox(height: 4),
+
+                // Container(
+                //   height: 48,
+                //   margin: const EdgeInsets.symmetric(horizontal: 26),
+                //   child: Row(
+                //     children: [
+                //       ProgressLine(active: _activeIndex == 0),
+                //       const SizedBox(width: 8),
+                //       ProgressLine(active: _activeIndex == 1),
+                //       const SizedBox(width: 8),
+                //       ProgressLine(active: _activeIndex == 2),
+                //       const SizedBox(width: 8),
+                //       ProgressLine(active: _activeIndex == 3),
+                //       const SizedBox(width: 29),
+                //       SvgPicture.asset('assets/icons/Frame 427318358.svg'),
+                //     ],
+                //   ),
+                // ),
+                // const SizedBox(height: 20),
+                // Container(
+                //   margin: const EdgeInsets.symmetric(horizontal: 24),
+                //   child: Row(
+                //     children: [
+                //       Expanded(
+                //         child: Text(
+                //           'Gestione el pago de nómina desde la app BIZ',
+                //           style: AppStyle.useNeoSans(
+                //             Colors.white,
+                //             24,
+                //             FontWeight.w700,
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 Expanded(child: Container()),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -478,24 +548,8 @@ class _LoginSheetContentState extends State<_LoginSheetContent> {
     setState(() => _authing = true);
 
     try {
-      final isSupported = await _auth.isDeviceSupported();
-      final canCheck = await _auth.canCheckBiometrics;
-      final available = await _auth.getAvailableBiometrics();
-
-      if (!isSupported) {
-        _show('Este dispositivo no soporta biometría.');
-        return;
-      }
-
-      if (!canCheck || available.isEmpty) {
-        _show('No hay biometría configurada en el dispositivo.');
-        return;
-      }
-
-      final didAuth = await _auth.authenticate(
-        localizedReason: 'Valide su identidad para continuar.',
-        biometricOnly: true,
-      );
+      // ✅ Abre el "prompt" encima del bottom sheet (simulación)
+      final didAuth = await showFakeBiometricPrompt(context);
 
       if (!mounted) return;
 
@@ -504,22 +558,6 @@ class _LoginSheetContentState extends State<_LoginSheetContent> {
       } else {
         _show('Autenticación cancelada.');
       }
-    } on LocalAuthException catch (e) {
-      final msg = switch (e.code) {
-        LocalAuthExceptionCode.noBiometricsEnrolled =>
-          'No tienes huella/rostro configurado.',
-        LocalAuthExceptionCode.noCredentialsSet =>
-          'Configura un PIN/Patrón/Clave en el dispositivo.',
-        LocalAuthExceptionCode.temporaryLockout =>
-          'Demasiados intentos. Intenta más tarde.',
-        LocalAuthExceptionCode.biometricLockout =>
-          'Biometría bloqueada. Desbloquea con PIN/Clave y vuelve a intentar.',
-        LocalAuthExceptionCode.userCanceled => 'Autenticación cancelada.',
-        _ => 'No se pudo usar la biometría.',
-      };
-
-      if (!mounted) return;
-      _show(msg);
     } finally {
       if (!mounted) return;
       setState(() => _authing = false);
@@ -590,7 +628,10 @@ class _LoginSheetContentState extends State<_LoginSheetContent> {
               const SizedBox(
                 width: 18,
                 height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Color(0XFFED8B00),
+                ),
               ),
             ],
 
@@ -643,6 +684,225 @@ class _LoginSheetContentState extends State<_LoginSheetContent> {
           ],
         ),
       ),
+    );
+  }
+}
+
+Future<bool> showFakeBiometricPrompt(BuildContext ctx) async {
+  return (await showGeneralDialog<bool>(
+        context: ctx,
+        barrierDismissible: false,
+        barrierLabel: 'biometric',
+        barrierColor: Colors.black.withOpacity(0.25),
+        useRootNavigator: true, // ✅ asegura que salga encima del bottom sheet
+        pageBuilder: (_, __, ___) {
+          return _FakeBiometricDialog(
+            onCancel: () => Navigator.of(ctx, rootNavigator: true).pop(false),
+            onSuccess: () => Navigator.of(ctx, rootNavigator: true).pop(true),
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 180),
+        transitionBuilder: (_, anim, __, child) {
+          final curved = CurvedAnimation(parent: anim, curve: Curves.easeOut);
+          return FadeTransition(
+            opacity: curved,
+            child: ScaleTransition(
+              scale: Tween(begin: 0.98, end: 1.0).animate(curved),
+              child: child,
+            ),
+          );
+        },
+      )) ??
+      false;
+}
+
+class _FakeBiometricDialog extends StatefulWidget {
+  final VoidCallback onCancel;
+  final VoidCallback onSuccess;
+
+  const _FakeBiometricDialog({required this.onCancel, required this.onSuccess});
+
+  @override
+  State<_FakeBiometricDialog> createState() => _FakeBiometricDialogState();
+}
+
+class _FakeBiometricDialogState extends State<_FakeBiometricDialog> {
+  bool _pressing = false;
+  bool _verified = false;
+  Timer? _holdTimer;
+
+  @override
+  void dispose() {
+    _holdTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startHold() {
+    if (_verified) return;
+
+    _holdTimer?.cancel();
+    setState(() => _pressing = true);
+
+    // ✅ Tiempo mínimo “mantener dedo” para aprobar (ajústalo)
+    _holdTimer = Timer(const Duration(milliseconds: 900), () {
+      if (!mounted) return;
+      if (!_pressing) return;
+
+      setState(() {
+        _verified = true;
+        _pressing = false;
+      });
+
+      // ✅ pequeña pausa visual y éxito
+      Future.delayed(const Duration(milliseconds: 250), () {
+        if (!mounted) return;
+        widget.onSuccess();
+      });
+    });
+  }
+
+  void _endHold() {
+    // Si suelta antes de tiempo, se cancela el escaneo (pero NO cierra el prompt)
+    _holdTimer?.cancel();
+    if (!mounted) return;
+    if (_verified) return;
+    setState(() => _pressing = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(child: Container()),
+        Material(
+          type: MaterialType.transparency,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+                child: Container(
+                  width: MediaQuery.sizeOf(context).width,
+                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(16, 32, 16, 32),
+                  decoration: BoxDecoration(
+                    color: const Color(
+                      0xFF1E1E1E,
+                    ).withOpacity(0.75), // ✅ #1E1E1E 75%
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "Biometría",
+                        style: TextStyle(
+                          fontFamily: 'SF',
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      const Text(
+                        "Escanea tu huella dactilar para acceder.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'SF',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      Text(
+                        _verified
+                            ? "Huella reconocida"
+                            : _pressing
+                            ? "Escaneando…"
+                            : "Huella dactilar para “App Biz”",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'SF',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      // ✅ Zona de "huella" que se mantiene presionada
+                      // GestureDetector(
+                      //   onLongPressStart: (_) => _startHold(),
+                      //   onLongPressEnd: (_) => _endHold(),
+                      //   onLongPressCancel: _endHold,
+                      //   behavior: HitTestBehavior.opaque,
+                      //   child: Container(
+                      //     padding: const EdgeInsets.symmetric(vertical: 10),
+                      //     width: double.infinity,
+                      //     alignment: Alignment.center,
+                      //     child: AnimatedOpacity(
+                      //       duration: const Duration(milliseconds: 120),
+                      //       opacity: _verified ? 0.6 : 1,
+                      //       child: Icon(
+                      //         Icons.fingerprint,
+                      //         size: 34,
+                      //         color: _pressing
+                      //             ? Colors.white
+                      //             : const Color(0xFFEAEAEA),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      if (_pressing) ...[
+                        const SizedBox(height: 6),
+                        const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color(0XFFED8B00),
+                          ),
+                        ),
+                      ],
+
+                      const SizedBox(height: 32),
+
+                      InkWell(
+                        onTap: widget.onCancel,
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          alignment: Alignment.center,
+                          child: const Text(
+                            "Cancelar",
+                            style: TextStyle(
+                              fontFamily: 'SF',
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 48),
+        GestureDetector(
+          onLongPressStart: (_) => _startHold(),
+          onLongPressEnd: (_) => _endHold(),
+          onLongPressCancel: _endHold,
+          behavior: HitTestBehavior.opaque,
+          child: SvgPicture.asset('assets/icons/Group 5228.svg'),
+        ),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+      ],
     );
   }
 }
@@ -894,6 +1154,7 @@ class _PasswordSheetContentState extends State<_PasswordSheetContent> {
                                   width: 16.5,
                                   height: 16.5,
                                   child: CircularProgressIndicator(
+                                    color: Color(0XFFED8B00),
                                     strokeWidth: 1.5,
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                       Colors.white,

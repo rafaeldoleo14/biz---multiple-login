@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/new_dashboard/new_dashboard.dart';
 import 'package:biz_codigo_cash/presentation/styles/app_styles.dart';
+import 'package:biz_codigo_cash/provider/multiple_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class BizCompanyLoginScreen extends StatefulWidget {
   const BizCompanyLoginScreen({super.key});
@@ -20,6 +22,7 @@ class _BizCompanyLoginScreenState extends State<BizCompanyLoginScreen> {
   final _companyFocus = FocusNode();
   final _userFocus = FocusNode();
   final _passFocus = FocusNode();
+  late final MultipleLoginProvider multipleLoginProvider;
 
   bool _obscure = true;
   bool _loading = false;
@@ -32,6 +35,10 @@ class _BizCompanyLoginScreenState extends State<BizCompanyLoginScreen> {
   @override
   void initState() {
     super.initState();
+    multipleLoginProvider = Provider.of<MultipleLoginProvider>(
+      context,
+      listen: false,
+    );
     _companyCtrl.addListener(_refresh);
     _userCtrl.addListener(_refresh);
     _passCtrl.addListener(_refresh);
@@ -62,6 +69,8 @@ class _BizCompanyLoginScreenState extends State<BizCompanyLoginScreen> {
     try {
       await Future.delayed(const Duration(seconds: 2));
       if (!mounted) return;
+
+      multipleLoginProvider.addCompany(_companyCtrl.text.trim());
 
       context.go(
         '/new-dashboard',

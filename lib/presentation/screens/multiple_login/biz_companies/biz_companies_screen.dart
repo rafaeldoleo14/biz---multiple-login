@@ -1,7 +1,9 @@
 import 'package:biz_codigo_cash/presentation/styles/app_styles.dart';
+import 'package:biz_codigo_cash/provider/multiple_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class BizCompaniesScreen extends StatefulWidget {
   const BizCompaniesScreen({super.key});
@@ -16,6 +18,16 @@ class _BizCompaniesScreenState extends State<BizCompaniesScreen>
   OverlayEntry? _toastEntry;
   AnimationController? _toastCtrl;
   int toastSeq = 0;
+  late final MultipleLoginProvider multipleLoginProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    multipleLoginProvider = Provider.of<MultipleLoginProvider>(
+      context,
+      listen: false,
+    );
+  }
 
   void _clearToastOverlay() {
     _barrierEntry?.remove();
@@ -42,19 +54,6 @@ class _BizCompaniesScreenState extends State<BizCompaniesScreen>
   static const line = Color(0xFFE5E5E5);
   static const bg = Color(0XFFFAFAFA);
   static const orange = Color(0xFFED8B00);
-
-  // ✅ Lista mutable para poder “remover” las desvinculadas si quieres
-  late final List<String> _companies = [
-    "The Coca Cola Company For DR",
-    "PepsiCo Inc.",
-    "Nestle S.A.",
-    "The Kraft Heinz Company",
-    "Unilever PLC",
-    "Dr Pepper Snapple Group",
-    "Mondelez International",
-    "Danone S.A.",
-    "Reckitt Benckiser Group PLC",
-  ];
 
   bool _unlinkMode = false;
   final Set<int> _selectedIndexes = {};
@@ -198,7 +197,9 @@ class _BizCompaniesScreenState extends State<BizCompaniesScreen>
     // ✅ Simulación (tú lo conectas a API)
     //    even => success, odd => fail
     final selected = _selectedIndexes.toList()..sort();
-    final selectedNames = selected.map((i) => _companies[i]).toList();
+    final selectedNames = selected
+        .map((i) => multipleLoginProvider.companies[i])
+        .toList();
 
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
@@ -218,7 +219,7 @@ class _BizCompaniesScreenState extends State<BizCompaniesScreen>
     setState(() {
       // eliminar por nombre para no romper índices
       for (final s in success) {
-        _companies.remove(s);
+        multipleLoginProvider.companies.remove(s);
       }
       _unlinkMode = false;
       _selectedIndexes.clear();
@@ -264,6 +265,9 @@ class _BizCompaniesScreenState extends State<BizCompaniesScreen>
         ? "Seleccione la cuenta con la que desea desvincular"
         : "Seleccione la cuenta con la que desea acceder";
 
+    final MultipleLoginProvider multipleLoginProvider =
+        Provider.of<MultipleLoginProvider>(context);
+
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
@@ -308,10 +312,10 @@ class _BizCompaniesScreenState extends State<BizCompaniesScreen>
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                itemCount: _companies.length,
+                itemCount: multipleLoginProvider.companies.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 10),
                 itemBuilder: (ctx, i) {
-                  final name = _companies[i];
+                  final name = multipleLoginProvider.companies[i];
                   final selected = _selectedIndexes.contains(i);
 
                   return InkWell(

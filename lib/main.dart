@@ -1,6 +1,7 @@
 import 'package:biz_codigo_cash/config/app_router.dart';
 import 'package:biz_codigo_cash/provider/cash_code.dart';
 import 'package:biz_codigo_cash/provider/multiple.dart';
+import 'package:biz_codigo_cash/provider/multiple_login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => CashCodeProvider()),
         ChangeNotifierProvider(create: (_) => MultipleActivationProvider()),
+        ChangeNotifierProvider(create: (_) => MultipleLoginProvider()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

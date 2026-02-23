@@ -1,7 +1,9 @@
+import 'package:biz_codigo_cash/provider/multiple_login.dart';
 import 'package:flutter/material.dart';
 import 'package:biz_codigo_cash/presentation/styles/app_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class NewDashboardArgs {
   final bool showTokenPopup;
@@ -171,6 +173,9 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
     const navy = Color(0xFF002B49);
     const orange = Color(0xFFED8B00);
 
+    final MultipleLoginProvider multipleLoginProvider =
+        Provider.of<MultipleLoginProvider>(context);
+
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
@@ -203,7 +208,7 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Hola Nicole',
+                                'Hola Usuario',
                                 style: AppStyle.useNeoSans(
                                   navy,
                                   20,
@@ -255,7 +260,8 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          'MONITOR DE SERVICIOS SA',
+                          multipleLoginProvider.loggedUser?.company ??
+                              'Empresa Prueba',
                           style: AppStyle.useNeoSans(
                             Colors.white,
                             14,

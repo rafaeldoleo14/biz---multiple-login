@@ -45,8 +45,8 @@ class _SplashScreenState extends State<SplashScreen>
 
     _navTimer = Timer(const Duration(milliseconds: 3500), () {
       if (!mounted) return;
-      context.go('/login');
-      // context.go('/welcome');
+      // context.go('/login');
+      context.go('/welcome');
     });
   }
 
