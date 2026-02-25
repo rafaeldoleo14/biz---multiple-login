@@ -6,38 +6,86 @@ class LoggedUser {
   final String username;
   final String password;
 
+  final bool biometricsEnabled;
+
   const LoggedUser({
     required this.company,
     required this.username,
     required this.password,
+    this.biometricsEnabled = false,
   });
 
-  LoggedUser copyWith({String? company, String? username, String? password}) {
+  LoggedUser copyWith({
+    String? company,
+    String? username,
+    String? password,
+    bool? biometricsEnabled,
+  }) {
     return LoggedUser(
       company: company ?? this.company,
       username: username ?? this.username,
       password: password ?? this.password,
+      biometricsEnabled: biometricsEnabled ?? this.biometricsEnabled,
     );
   }
 }
 
 class MultipleLoginProvider with ChangeNotifier {
   final List<String> companies = [
-    "The Coca Cola Company For DR",
-    "PepsiCo Inc.",
-    "Nestle S.A.",
-    "The Kraft Heinz Company",
-    "Unilever PLC",
-    "Dr Pepper Snapple Group",
-    "Mondelez International",
-    "Danone S.A.",
-    "Reckitt Benckiser Group PLC",
+    // "The Coca Cola Company For DR",
+    // "PepsiCo Inc.",
+    // "Nestle S.A.",
+    // "The Kraft Heinz Company",
+    // "Unilever PLC",
+    // "Dr Pepper Snapple Group",
+    // "Mondelez International",
+    // "Danone S.A.",
+    // "Reckitt Benckiser Group PLC",
   ];
 
   LoggedUser? _loggedUser;
 
+  final Map<String, bool> _biometricsByAccount = {};
+
   LoggedUser? get loggedUser => _loggedUser;
   bool get isLoggedIn => _loggedUser != null;
+
+  // bool get bool isMultipleRncs => companies.length > 1 ? true : false;
+  bool get isMultipleRncs => companies.length > 1;
+
+  String _accountKey(String company, String username) {
+    return '${company.trim().toLowerCase()}|${username.trim().toLowerCase()}';
+  }
+
+  bool isBiometricsEnabled({
+    required String company,
+    required String username,
+  }) {
+    final key = _accountKey(company, username);
+    return _biometricsByAccount[key] ?? false;
+  }
+
+  void setBiometricsEnabled({
+    required String company,
+    required String username,
+    required bool enabled,
+  }) {
+    final c = company.trim();
+    final u = username.trim();
+    if (c.isEmpty || u.isEmpty) return;
+
+    final key = _accountKey(c, u);
+    _biometricsByAccount[key] = enabled;
+
+    final lu = _loggedUser;
+    if (lu != null &&
+        lu.company.trim().toLowerCase() == c.toLowerCase() &&
+        lu.username.trim().toLowerCase() == u.toLowerCase()) {
+      _loggedUser = lu.copyWith(biometricsEnabled: enabled);
+    }
+
+    notifyListeners();
+  }
 
   void addCompany(String company) {
     final newValue = company.trim();
@@ -68,9 +116,17 @@ class MultipleLoginProvider with ChangeNotifier {
 
     if (c.isEmpty || u.isEmpty || password.isEmpty) return;
 
-    _loggedUser = LoggedUser(company: c, username: u, password: password);
+    final enabled = isBiometricsEnabled(company: c, username: u);
+
+    _loggedUser = LoggedUser(
+      company: c,
+      username: u,
+      password: password,
+      biometricsEnabled: enabled,
+    );
 
     addCompany(c);
+    notifyListeners();
   }
 
   void logout() {

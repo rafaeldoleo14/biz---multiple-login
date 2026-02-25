@@ -77,6 +77,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
       multipleLoginProvider.addCompany(_companyUserCtrl.text.trim());
 
+      multipleLoginProvider.login(
+        company: _companyUserCtrl.text,
+        username: _userCtrl.text,
+        password: _passCtrl.text,
+      );
+
       context.push('/token-popular');
     } finally {
       if (!mounted) return;
@@ -98,6 +104,10 @@ class _LoginScreenState extends State<LoginScreen> {
       fillColor: isFocused ? focusFill : Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
+      ),
+      border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
       ),
@@ -157,11 +167,14 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
           child: Column(
             children: [
-              SizedBox(
-                width: double.infinity,
-                height: 72,
-                child: Row(
-                  children: [SvgPicture.asset('assets/icons/Menu_icon.svg')],
+              Opacity(
+                opacity: 0,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 72,
+                  child: Row(
+                    children: [SvgPicture.asset('assets/icons/Menu_icon.svg')],
+                  ),
                 ),
               ),
               SvgPicture.asset('assets/icons/LogoBPD2.svg'),

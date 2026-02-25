@@ -15,6 +15,7 @@ import 'package:biz_codigo_cash/presentation/screens/deposit/deposit_select_acco
 import 'package:biz_codigo_cash/presentation/screens/deposit/deposit_submitted_screen.dart';
 import 'package:biz_codigo_cash/presentation/screens/deposit/deposit_validating_token_screen.dart';
 import 'package:biz_codigo_cash/presentation/screens/deposit/deposit_verification_screen.dart';
+import 'package:biz_codigo_cash/presentation/screens/multiple_login/biometric_settings/biometric_settings_screen.dart';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/biz_companies/biz_companies_screen.dart';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/biz_company_for_login/biz_company_for_login_screen.dart';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/biz_company_login/biz_company_login_screen.dart';
@@ -68,7 +69,7 @@ GoRoute _animatedBuilderRoute(
 }
 
 final appRouter = GoRouter(
-  initialLocation: '/new-dashboard',
+  initialLocation: '/splash',
 
   routes: [
     // Múltiple login
@@ -91,6 +92,7 @@ final appRouter = GoRouter(
     _animatedRoute('/add-company', const BizCompanyLoginScreen()),
     _animatedRoute('/companies', const BizCompaniesScreen()),
     _animatedRoute('/profile-menu', const BizProfileMenuScreen()),
+    _animatedRoute('/biometric-settings', const BiometricSettingsScreen()),
     _animatedBuilderRoute('/company-login', (context, state) {
       final companyName = state.extra as String?;
       return BizCompanyForLoginScreen(companyName: companyName ?? '');

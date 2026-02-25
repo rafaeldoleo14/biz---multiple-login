@@ -190,7 +190,7 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
                   children: [
                     _CircleInitials(
                       size: 40,
-                      text: "NF",
+                      text: "UP",
                       bg: Color(0XFF002B49),
                       border: Color(0XFF002B49),
                       textColor: Colors.white,

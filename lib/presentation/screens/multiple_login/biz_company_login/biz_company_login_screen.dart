@@ -72,6 +72,12 @@ class _BizCompanyLoginScreenState extends State<BizCompanyLoginScreen> {
 
       multipleLoginProvider.addCompany(_companyCtrl.text.trim());
 
+      multipleLoginProvider.login(
+        company: _companyCtrl.text,
+        username: _userCtrl.text,
+        password: _passCtrl.text,
+      );
+
       context.go(
         '/new-dashboard',
         extra: const NewDashboardArgs(showTokenPopup: false),
@@ -96,6 +102,10 @@ class _BizCompanyLoginScreenState extends State<BizCompanyLoginScreen> {
       fillColor: isFocused ? focusFill : Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
+      ),
+      border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
       ),

@@ -21,7 +21,6 @@ class BizWelcomeBackScreen extends StatefulWidget {
 class _BizWelcomeBackScreenState extends State<BizWelcomeBackScreen> {
   /// ✅ Flag para probar MULTIPLE RNCs
   /// (luego lo conectas a tu API / storage)
-  final bool isMultipleRncs = false;
 
   // ✅ Tus 4 imágenes (luego cambias las rutas)
   final List<String> _images = const [
@@ -33,10 +32,16 @@ class _BizWelcomeBackScreenState extends State<BizWelcomeBackScreen> {
 
   int _activeIndex = 0;
   Timer? _timer;
+  late final MultipleLoginProvider multipleLoginProvider;
 
   @override
   void initState() {
     super.initState();
+
+    multipleLoginProvider = Provider.of<MultipleLoginProvider>(
+      context,
+      listen: false,
+    );
 
     _timer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (!mounted) return;
@@ -53,13 +58,15 @@ class _BizWelcomeBackScreenState extends State<BizWelcomeBackScreen> {
   }
 
   void _onTapLogin(BuildContext context) {
-    if (isMultipleRncs) {
+    if (multipleLoginProvider.isMultipleRncs == true) {
       _showSelectCompanySheet(context);
     } else {
       // ✅ No multiple: abre biometría y dispara auth automático
       _showLoginSheetWithCompany(
         context,
-        companyName: "The Coca Cola Company For DR",
+        companyName:
+            multipleLoginProvider.companies[0] ??
+            "The Coca Cola Company For DR",
       );
     }
   }
@@ -70,7 +77,7 @@ class _BizWelcomeBackScreenState extends State<BizWelcomeBackScreen> {
   // =========================
   Future<void> _showSelectCompanySheet(BuildContext context) async {
     final MultipleLoginProvider multipleLoginProvider =
-        Provider.of<MultipleLoginProvider>(context);
+        Provider.of<MultipleLoginProvider>(context, listen: false);
 
     final companies = multipleLoginProvider.companies;
 
@@ -128,13 +135,22 @@ class _BizWelcomeBackScreenState extends State<BizWelcomeBackScreen> {
         companyName: companyName,
         onBack: () => Navigator.pop(sheetCtx),
         onPassword: () async {
-          Navigator.pop(sheetCtx);
-          await Future.delayed(const Duration(milliseconds: 120));
+          // Navigator.pop(sheetCtx);
+          await Future.delayed(const Duration(milliseconds: 0));
           if (!context.mounted) return;
           _showPasswordLoginSheet(context, companyName: companyName);
         },
         onBiometricSuccess: () {
           Navigator.pop(sheetCtx);
+          multipleLoginProvider.addCompany(
+            multipleLoginProvider.companies[0].trim(),
+          );
+
+          multipleLoginProvider.login(
+            company: multipleLoginProvider.companies[0],
+            username: 'UserTest',
+            password: '1234',
+          );
           context.go(
             '/new-dashboard',
             extra: const NewDashboardArgs(showTokenPopup: false),
@@ -163,9 +179,25 @@ class _BizWelcomeBackScreenState extends State<BizWelcomeBackScreen> {
       builder: (sheetCtx) => _PasswordSheetContent(
         companyLabel: "Empresa",
         companyName: companyName,
-        onBack: () => Navigator.pop(sheetCtx),
+        onBack: () {
+          Navigator.pop(sheetCtx);
+
+          if (multipleLoginProvider.isMultipleRncs == true) {
+            Future.microtask(() {
+              if (!context.mounted) return;
+              _showSelectCompanySheet(context);
+            });
+          }
+        },
         onSubmit: (password) {
           Navigator.pop(sheetCtx);
+          multipleLoginProvider.addCompany(companyName.trim());
+
+          multipleLoginProvider.login(
+            company: companyName,
+            username: 'UserTest',
+            password: '1234',
+          );
           context.go(
             '/new-dashboard',
             extra: const NewDashboardArgs(showTokenPopup: false),
@@ -613,14 +645,34 @@ class _LoginSheetContentState extends State<_LoginSheetContent> {
             ),
             Container(height: 1.5, color: line),
             const SizedBox(height: 40),
-            SvgPicture.asset('assets/icons/1.svg'),
-            const SizedBox(height: 8),
-            Text(
-              "Accede con rostro o huella",
-              style: AppStyle.useGoogleFont(
-                const Color(0xFF002B49),
-                16,
-                FontWeight.w700,
+            GestureDetector(
+              onTap: () async {
+                final didAuth = await showFakeBiometricPrompt(context);
+
+                if (!mounted) return;
+
+                if (didAuth) {
+                  widget.onBiometricSuccess();
+                } else {
+                  _show('Autenticación cancelada.');
+                }
+              },
+              child: Container(
+                color: Colors.transparent,
+                child: Column(
+                  children: [
+                    SvgPicture.asset('assets/icons/1.svg'),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Accede con rostro o huella",
+                      style: AppStyle.useGoogleFont(
+                        const Color(0xFF002B49),
+                        16,
+                        FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             if (_authing) ...[
@@ -893,15 +945,19 @@ class _FakeBiometricDialogState extends State<_FakeBiometricDialog> {
             ),
           ),
         ),
-        SizedBox(height: 48),
+        SizedBox(height: 28),
         GestureDetector(
           onLongPressStart: (_) => _startHold(),
           onLongPressEnd: (_) => _endHold(),
           onLongPressCancel: _endHold,
           behavior: HitTestBehavior.opaque,
-          child: SvgPicture.asset('assets/icons/Group 5228.svg'),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            color: Colors.transparent,
+            child: SvgPicture.asset('assets/icons/Group 5228.svg'),
+          ),
         ),
-        SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.14),
       ],
     );
   }
@@ -981,6 +1037,10 @@ class _PasswordSheetContentState extends State<_PasswordSheetContent> {
       fillColor: isFocused ? focusFill : Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
+      ),
+      border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: Color(0xFFE5E5E5), width: 1),
       ),

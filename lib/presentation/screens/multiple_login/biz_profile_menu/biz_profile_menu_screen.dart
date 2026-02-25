@@ -1,7 +1,9 @@
 import 'package:biz_codigo_cash/presentation/styles/app_styles.dart';
+import 'package:biz_codigo_cash/provider/multiple_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class BizProfileMenuScreen extends StatelessWidget {
   const BizProfileMenuScreen({super.key});
@@ -16,9 +18,11 @@ class BizProfileMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MultipleLoginProvider multipleLoginProvider =
+        Provider.of<MultipleLoginProvider>(context);
     // Ejemplo (puedes pasar esto por params)
-    final initials = "NF";
-    final fullName = "Nicole Marie Pérez Lantigua";
+    final initials = "UP";
+    final fullName = "Usuario Prueba";
 
     return Scaffold(
       backgroundColor: bg,
@@ -144,7 +148,7 @@ class BizProfileMenuScreen extends StatelessWidget {
                           'assets/icons/Button_menu (3).svg', // <-- cambia
                       title: "Configurar",
                       onTap: () {
-                        // context.push('/settings');
+                        context.push('/biometric-settings');
                       },
                     ),
                   ],
@@ -171,7 +175,10 @@ class BizProfileMenuScreen extends StatelessWidget {
                       iconAsset:
                           'assets/icons/Button_menu (5).svg', // <-- cambia
                       title: "Salir",
-                      onTap: () {},
+                      onTap: () {
+                        multipleLoginProvider.logout();
+                        context.go('/welcome');
+                      },
                     ),
                   ],
                 ),
@@ -198,7 +205,7 @@ class _PillButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(999),
           border: Border.all(color: const Color(0xFFE5E5E5), width: 1.5),
         ),

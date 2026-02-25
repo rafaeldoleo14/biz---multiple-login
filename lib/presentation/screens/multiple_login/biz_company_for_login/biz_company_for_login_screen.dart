@@ -2,9 +2,11 @@ import 'dart:async';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/new_dashboard/new_dashboard.dart';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/validating_route/validating_route_screen.dart';
 import 'package:biz_codigo_cash/presentation/styles/app_styles.dart';
+import 'package:biz_codigo_cash/provider/multiple_login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class BizCompanyForLoginScreen extends StatefulWidget {
   final String companyName;
@@ -29,10 +31,15 @@ class _BizCompanyForLoginScreenState extends State<BizCompanyForLoginScreen> {
   bool _loading = false; // ✅ NEW: loader state
 
   bool get _canSubmit => _passCtrl.text.trim().isNotEmpty;
+  late final MultipleLoginProvider multipleLoginProvider;
 
   @override
   void initState() {
     super.initState();
+    multipleLoginProvider = Provider.of<MultipleLoginProvider>(
+      context,
+      listen: false,
+    );
     _passCtrl.addListener(() => setState(() {}));
   }
 
@@ -53,6 +60,14 @@ class _BizCompanyForLoginScreenState extends State<BizCompanyForLoginScreen> {
       await Future.delayed(const Duration(seconds: 2));
 
       if (!mounted) return;
+
+      multipleLoginProvider.addCompany(widget.companyName.trim());
+
+      multipleLoginProvider.login(
+        company: widget.companyName,
+        username: 'UserTest',
+        password: '1234',
+      );
 
       context.go(
         '/validating-generic',
