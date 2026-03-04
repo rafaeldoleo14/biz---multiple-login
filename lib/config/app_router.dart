@@ -17,7 +17,7 @@ import 'package:biz_codigo_cash/presentation/screens/deposit/deposit_validating_
 import 'package:biz_codigo_cash/presentation/screens/deposit/deposit_verification_screen.dart';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/biometric_settings/biometric_settings_screen.dart';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/biz_companies/biz_companies_screen.dart';
-import 'package:biz_codigo_cash/presentation/screens/multiple_login/biz_company_for_login/biz_company_for_login_screen.dart';
+import 'package:biz_codigo_cash/presentation/screens/multiple_login/biz_company_for_login/biz_company_for_login_screen';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/biz_company_login/biz_company_login_screen.dart';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/biz_profile_menu/biz_profile_menu_screen.dart';
 import 'package:biz_codigo_cash/presentation/screens/multiple_login/biz_welcome_back/biz_welcome_back_screen.dart';
