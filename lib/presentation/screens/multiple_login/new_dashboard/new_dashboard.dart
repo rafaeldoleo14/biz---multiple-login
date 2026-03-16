@@ -30,6 +30,94 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
     'Certificados',
   ];
 
+  final List<_DashboardProductItem> _cuentas = const [
+    _DashboardProductItem(
+      title: 'Cuenta Ahorros / 799792901',
+      subtitle: 'Disponible: RD\$45,340.00',
+    ),
+    _DashboardProductItem(
+      title: 'Cuenta Corriente / 799792888',
+      subtitle: 'Disponible: RD\$85,340.00',
+    ),
+    _DashboardProductItem(
+      title: 'Cuenta Ahorros / 799792902',
+      subtitle: 'Disponible: US\$12,540.00',
+    ),
+    _DashboardProductItem(
+      title: 'Cuenta Corriente / 799792889',
+      subtitle: 'Disponible: US\$72,150.00',
+    ),
+    _DashboardProductItem(
+      title: 'Cuenta Corriente / 799792903',
+      subtitle: 'Disponible: EU\$30,000.00',
+    ),
+    _DashboardProductItem(
+      title: 'Cuenta Ahorros / 799792904',
+      subtitle: 'Disponible: EU\$5,250.00',
+    ),
+  ];
+
+  final List<_DashboardProductItem> _tarjetas = const [
+    _DashboardProductItem(
+      title: 'Tarjeta de crédito / *9764',
+      subtitle: 'Balance a la fecha: RD\$45,340.00',
+    ),
+    _DashboardProductItem(
+      title: 'Tarjeta de crédito / *8876',
+      subtitle: 'Balance a la fecha: RD\$85,340.00',
+    ),
+    _DashboardProductItem(
+      title: 'Tarjeta de crédito / *1234',
+      subtitle: 'Balance a la fecha: RD\$32,150.00',
+    ),
+    _DashboardProductItem(
+      title: 'Tarjeta de crédito / *5678',
+      subtitle: 'Balance a la fecha: RD\$58,900.00',
+    ),
+    _DashboardProductItem(
+      title: 'Tarjeta de crédito / *4321',
+      subtitle: 'Balance a la fecha: US\$19,750.00',
+    ),
+    _DashboardProductItem(
+      title: 'Tarjeta de crédito / *8765',
+      subtitle: 'Balance a la fecha: US\$72,600.00',
+    ),
+  ];
+
+  final List<_DashboardProductItem> _prestamos = const [
+    _DashboardProductItem(
+      title: 'Préstamo / *9405',
+      subtitle: 'Balance: RD\$45,340.00',
+    ),
+    _DashboardProductItem(
+      title: 'Préstamo / *1234',
+      subtitle: 'Balance: RD\$30,220.50',
+    ),
+    _DashboardProductItem(
+      title: 'Préstamo / *5678',
+      subtitle: 'Balance: RD\$78,450.75',
+    ),
+    _DashboardProductItem(
+      title: 'Préstamo / *9101',
+      subtitle: 'Balance: RD\$12,750.00',
+    ),
+  ];
+
+  final List<_DashboardProductItem> _certificados = const [
+    _DashboardProductItem(
+      title: 'Depósito a plazo / *9764',
+      subtitle: 'Balance a la fecha: RD\$45,340.00',
+    ),
+    _DashboardProductItem(
+      title: 'Depósito a plazo / *8876',
+      subtitle: 'Balance a la fecha: RD\$85,340.00',
+    ),
+    _DashboardProductItem(
+      title: 'Depósito a plazo / *1234',
+      subtitle: 'Balance a la fecha: RD\$32,150.00',
+    ),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -39,7 +127,7 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
       if (!mounted) return;
 
       if (widget.args.showTokenPopup) {
-        _showInstallTokenPopupAnimated();
+        // _showInstallTokenPopupAnimated();
       }
     });
   }
@@ -89,7 +177,6 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 13.5),
                         child: SizedBox(
@@ -118,9 +205,7 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 14),
-
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 13.5),
                         child: SizedBox(
@@ -167,6 +252,21 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
     );
   }
 
+  List<_DashboardProductItem> get _currentProducts {
+    switch (_selectedTab) {
+      case 1:
+        return _cuentas;
+      case 2:
+        return _tarjetas;
+      case 3:
+        return _prestamos;
+      case 4:
+        return _certificados;
+      default:
+        return const [];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const bg = Color(0xFFFAFAFA);
@@ -177,6 +277,25 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
         Provider.of<MultipleLoginProvider>(context);
 
     return Scaffold(
+      floatingActionButton: _selectedTab != 0
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 8, right: 8),
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFED8B00),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/icons/AddSubtract_icon (4).svg',
+                  ),
+                ),
+              ),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       backgroundColor: bg,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -184,15 +303,15 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
             children: [
               // ===== HEADER =====
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 height: 70,
                 child: Row(
                   children: [
                     _CircleInitials(
                       size: 40,
                       text: "UP",
-                      bg: Color(0XFF002B49),
-                      border: Color(0XFF002B49),
+                      bg: const Color(0XFF002B49),
+                      border: const Color(0XFF002B49),
                       textColor: Colors.white,
                     ),
                     const SizedBox(width: 16),
@@ -299,7 +418,7 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
                           color: selected ? orange : Colors.white,
                           borderRadius: BorderRadius.circular(999),
                           border: Border.all(
-                            color: selected ? orange : Color(0XFFE5E5E5),
+                            color: selected ? orange : const Color(0XFFE5E5E5),
                           ),
                         ),
                         child: Row(
@@ -325,204 +444,231 @@ class _NewDashboardScreenState extends State<NewDashboardScreen> {
 
               const SizedBox(height: 16),
 
-              // ===== SUMMARY (horizontal scroll) =====
-              SizedBox(
-                height: 154.36, // ajusta según tu card
-                child: ListView.separated(
+              if (_selectedTab == 0) ...[
+                // ===== SUMMARY (horizontal scroll) =====
+                SizedBox(
+                  height: 154.36,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 4,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    itemBuilder: (_, i) {
+                      final items = [
+                        const _MiniSummaryCard(
+                          title: "Cuentas",
+                          iconAsset: "assets/icons/Cuenta_icon.svg",
+                          amounts: [
+                            "RD\$ 20,182,372.99",
+                            "US\$ 20,000.00",
+                            "EU\$ 3,576.02",
+                          ],
+                        ),
+                        const _MiniSummaryCard(
+                          title: "Préstamos",
+                          iconAsset: "assets/icons/Préstamos_icon.svg",
+                          amounts: [
+                            "RD\$ 20,182,372.99",
+                            "US\$ 20,000.00",
+                            "EU\$ 3,576.02",
+                          ],
+                        ),
+                        const _MiniSummaryCard(
+                          title: "Tarjetas",
+                          iconAsset: "assets/icons/Tarjetas.svg",
+                          amounts: [
+                            "RD\$ 20,182,372.99",
+                            "US\$ 20,000.00",
+                            "EU\$ 3,576.02",
+                          ],
+                        ),
+                        const _MiniSummaryCard(
+                          title: "Depósito a\nplazo",
+                          iconAsset: "assets/icons/Certificados (1).svg",
+                          amounts: ["RD\$ 20,182,372.99", "US\$ 20,000.00"],
+                        ),
+                      ];
+
+                      return SizedBox(width: 142, child: items[i]);
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                // ===== QUICK ACCESS =====
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 4,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Accesos rápidos",
+                          style: AppStyle.useGoogleFont(
+                            const Color(0XFF424242),
+                            20,
+                            FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () {},
+                        child: Row(
+                          children: [
+                            Text(
+                              "Agregar",
+                              style: AppStyle.useGoogleFont(
+                                const Color(0XFF012169),
+                                12,
+                                FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            SvgPicture.asset(
+                              'assets/icons/AddSubtract_icon (1).svg',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   scrollDirection: Axis.horizontal,
-                  itemCount: 4,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
-                  itemBuilder: (_, i) {
-                    final items = [
-                      const _MiniSummaryCard(
-                        title: "Cuentas",
-                        iconAsset: "assets/icons/Cuenta_icon.svg",
-                        amounts: [
-                          "RD\$ 20,182,372.99",
-                          "US\$ 20,000.00",
-                          "EU\$ 3,576.02",
-                        ],
+                  child: Row(
+                    children: const [
+                      _QuickAccessTile(
+                        label: "Adición de\nbeneficiario",
+                        iconAsset: "assets/icons/Frame 4.svg",
                       ),
-                      const _MiniSummaryCard(
-                        title: "Préstamos",
-                        iconAsset: "assets/icons/Préstamos_icon.svg",
-                        amounts: [
-                          "RD\$ 20,182,372.99",
-                          "US\$ 20,000.00",
-                          "EU\$ 3,576.02",
-                        ],
+                      SizedBox(width: 8),
+                      _QuickAccessTile(
+                        label: "Pago\nempleados",
+                        iconAsset: "assets/icons/Frame 4 (1).svg",
                       ),
-                      const _MiniSummaryCard(
-                        title: "Tarjetas",
-                        iconAsset: "assets/icons/Tarjetas.svg",
-                        amounts: [
-                          "RD\$ 20,182,372.99",
-                          "US\$ 20,000.00",
-                          "EU\$ 3,576.02",
-                        ],
+                      SizedBox(width: 8),
+                      _QuickAccessTile(
+                        label: "Código\nCash",
+                        iconAsset: "assets/icons/Frame 4 (2).svg",
                       ),
-                      const _MiniSummaryCard(
-                        title: "Depósito a\nplazo",
-                        iconAsset: "assets/icons/Certificados (1).svg",
-                        amounts: ["RD\$ 20,182,372.99", "US\$ 20,000.00"],
+                      SizedBox(width: 8),
+                      _QuickAccessTile(
+                        label: "Pago\nTarjetas de\ncrédito",
+                        iconAsset: "assets/icons/Frame 4 (3).svg",
                       ),
-                    ];
-
-                    return SizedBox(width: 142, child: items[i]);
-                  },
+                      SizedBox(width: 8),
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 12),
+                const SizedBox(height: 18),
 
-              // ===== QUICK ACCESS =====
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "Accesos rápidos",
-                        style: AppStyle.useGoogleFont(
-                          Color(0XFF424242),
-                          20,
-                          FontWeight.w700,
+                // ===== RECOMMENDED =====
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 4,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Recomendados para ti",
+                          style: AppStyle.useGoogleFont(
+                            const Color(0XFF424242),
+                            20,
+                            FontWeight.w700,
+                          ),
                         ),
                       ),
-                    ),
-                    InkWell(
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () {},
-                      child: Row(
-                        children: [
-                          Text(
-                            "Agregar",
-                            style: AppStyle.useGoogleFont(
-                              Color(0XFF012169),
-                              12,
-                              FontWeight.w600,
+                      InkWell(
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Ver más",
+                              style: AppStyle.useGoogleFont(
+                                const Color(0XFF012169),
+                                12,
+                                FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 4),
-                          SvgPicture.asset(
-                            'assets/icons/AddSubtract_icon (1).svg',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: const [
-                    _QuickAccessTile(
-                      label: "Adición de\nbeneficiario",
-                      iconAsset: "assets/icons/Frame 4.svg",
-                    ),
-                    SizedBox(width: 8),
-                    _QuickAccessTile(
-                      label: "Pago\nempleados",
-                      iconAsset: "assets/icons/Frame 4 (1).svg",
-                    ),
-                    SizedBox(width: 8),
-                    _QuickAccessTile(
-                      label: "Código\nCash",
-                      iconAsset: "assets/icons/Frame 4 (2).svg",
-                    ),
-                    SizedBox(width: 8),
-                    _QuickAccessTile(
-                      label: "Pago\nTarjetas de\ncrédito",
-                      iconAsset: "assets/icons/Frame 4 (3).svg",
-                    ),
-                    SizedBox(width: 8),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 18),
-
-              // ===== RECOMMENDED =====
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "Recomendados para ti",
-                        style: AppStyle.useGoogleFont(
-                          Color(0XFF424242),
-                          20,
-                          FontWeight.w700,
+                            const SizedBox(width: 4),
+                            SvgPicture.asset(
+                              'assets/icons/Chevron_icon (2).svg',
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    InkWell(
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Ver más",
-                            style: AppStyle.useGoogleFont(
-                              Color(0XFF012169),
-                              12,
-                              FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(width: 4),
-                          SvgPicture.asset('assets/icons/Chevron_icon (2).svg'),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 5),
+                const SizedBox(height: 5),
 
-              Container(
-                height: 312 + 24,
-                clipBehavior: Clip.none,
-                child: ListView.separated(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 4,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                Container(
+                  height: 312 + 24,
+                  clipBehavior: Clip.none,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 10,
+                    ),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 4,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    itemBuilder: (_, i) {
+                      final items = _recommendedCards();
+                      final data = items[i];
+                      return _RecommendedCard(
+                        title: data.title,
+                        desc: data.desc,
+                        leftBtn: data.leftBtn,
+                        rightBtn: data.rightBtn,
+                        iconAsset: data.iconAsset,
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 31),
+              ] else ...[
+                ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 120),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _currentProducts.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (_, i) {
-                    final items = _recommendedCards();
-                    final data = items[i];
-                    return _RecommendedCard(
-                      title: data.title,
-                      desc: data.desc,
-                      leftBtn: data.leftBtn,
-                      rightBtn: data.rightBtn,
-                      iconAsset: data.iconAsset,
+                    final item = _currentProducts[i];
+                    return _DashboardProductCard(
+                      title: item.title,
+                      subtitle: item.subtitle,
                     );
                   },
                 ),
-              ),
-
-              const SizedBox(height: 31),
+              ],
             ],
           ),
         ),
       ),
-
       bottomNavigationBar: BizBottomBar(
         selectedIndex: _selectedBottom,
         onSelect: (i) => setState(() => _selectedBottom = i),
@@ -665,7 +811,6 @@ class _MiniSummaryCard extends StatelessWidget {
 }
 
 List<InlineSpan> _moneySpan(String value) {
-  // Ej: "RD$ 20,182,372.99" => moneda="RD$" resto="20,182,372.99"
   final parts = value.trim().split(RegExp(r'\s+'));
   final currency = parts.isNotEmpty ? parts.first : '';
   final rest = parts.length > 1 ? parts.sublist(1).join(' ') : '';
@@ -713,7 +858,7 @@ class _QuickAccessTile extends StatelessWidget {
               label,
               textAlign: TextAlign.center,
               style: AppStyle.useGoogleFont(
-                Color(0XFF012169),
+                const Color(0XFF012169),
                 12,
                 FontWeight.w600,
               ).copyWith(height: 1.2),
@@ -800,7 +945,7 @@ class _RecommendedCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             offset: Offset(0, 4),
             blurRadius: 12,
@@ -824,7 +969,7 @@ class _RecommendedCard extends StatelessWidget {
                 Text(
                   title,
                   style: AppStyle.useGoogleFont(
-                    Color(0XFF002B49),
+                    const Color(0XFF002B49),
                     18,
                     FontWeight.w500,
                   ),
@@ -833,7 +978,7 @@ class _RecommendedCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Container(height: 1, color: Color(0XFFE5E5E5)),
+          Container(height: 1, color: const Color(0XFFE5E5E5)),
           const SizedBox(height: 16),
           Expanded(
             child: Text(
@@ -923,6 +1068,67 @@ class _PrimarySmallButton extends StatelessWidget {
   }
 }
 
+class _DashboardProductItem {
+  final String title;
+  final String subtitle;
+
+  const _DashboardProductItem({required this.title, required this.subtitle});
+}
+
+class _DashboardProductCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+
+  const _DashboardProductCard({required this.title, required this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(
+        left: 13.09,
+        right: 11,
+        top: 12,
+        bottom: 14.88,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE5E5E5)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: AppStyle.useGoogleFont(
+                    const Color(0xFF002B49),
+                    14,
+                    FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  subtitle,
+                  style: AppStyle.useGoogleFont(
+                    const Color(0xFF757575),
+                    14,
+                    FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          SvgPicture.asset('assets/icons/show22.svg'),
+        ],
+      ),
+    );
+  }
+}
+
 class BizBottomBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
@@ -958,7 +1164,7 @@ class BizBottomBar extends StatelessWidget {
                 SvgPicture.asset(
                   'assets/icons/$iconPath.svg',
                   colorFilter: ColorFilter.mode(
-                    selected ? navy : Color(0XFF5E5F60),
+                    selected ? navy : const Color(0XFF5E5F60),
                     BlendMode.srcIn,
                   ),
                 ),
@@ -969,7 +1175,7 @@ class BizBottomBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: selected ? FontWeight.w500 : FontWeight.w500,
-                    color: selected ? navy : Color(0XFF5E5F60),
+                    color: selected ? navy : const Color(0XFF5E5F60),
                     height: 1.1,
                   ),
                 ),
@@ -984,14 +1190,13 @@ class BizBottomBar extends StatelessWidget {
       child: SizedBox(
         height: 85,
         child: Stack(
-          clipBehavior: Clip.none, // ✅ para que no se corte el círculo
+          clipBehavior: Clip.none,
           children: [
-            // ===== Barra blanca con sombra y esquinas redondeadas =====
             Positioned.fill(
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
                   ),
@@ -999,7 +1204,7 @@ class BizBottomBar extends StatelessWidget {
                     BoxShadow(
                       color: Color.fromRGBO(1, 32, 105, 0.16),
                       blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      offset: Offset(0, 4),
                       spreadRadius: 0,
                     ),
                   ],
@@ -1018,9 +1223,7 @@ class BizBottomBar extends StatelessWidget {
                       label: "Autorizaciones",
                       iconPath: 'AutorizacionesPendientes_icon (1)',
                     ),
-
                     const SizedBox(width: 70),
-
                     navItem(
                       index: 3,
                       icon: const Icon(Icons.handshake_outlined),
@@ -1037,8 +1240,6 @@ class BizBottomBar extends StatelessWidget {
                 ),
               ),
             ),
-
-            // ===== Botón central (aro blanco + círculo naranja) =====
             Positioned(
               top: -26,
               left: 0,
@@ -1055,17 +1256,9 @@ class BizBottomBar extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.all(6),
                     child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFED8B00),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFED8B00),
                         shape: BoxShape.circle,
-                        // boxShadow: [
-                        //   BoxShadow(
-                        //     color: Color.fromRGBO(1, 32, 105, 0.16),
-                        //     blurRadius: 12,
-                        //     offset: const Offset(0, 4),
-                        //     spreadRadius: 0,
-                        //   ),
-                        // ],
                       ),
                       child: Center(
                         child: SvgPicture.asset(
